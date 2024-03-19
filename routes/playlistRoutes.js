@@ -7,7 +7,8 @@ const {
     playlistPostVideo,
     playlistGet,
     playlistGetAll,
-    playlistDelete
+    playlistDelete,
+    playlistDeleteVideo
   } = require("../controllers/playlistController.js");
 
 router.get("/:id", playlistGet);
@@ -17,5 +18,7 @@ router.post("/:id", playlistPostVideo); //Creates a video in a playlist
 router.patch("/:id", playlistPatch);
 router.put("/:id", playlistPatch);
 router.delete("/:id", playlistDelete);
+router.delete("/:id/:videoId", playlistDeleteVideo);
+
 
 module.exports = router;

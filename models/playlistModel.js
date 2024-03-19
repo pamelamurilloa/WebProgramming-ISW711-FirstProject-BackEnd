@@ -1,17 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const video = new mongoose.Schema({
-    name: {
-        required: true,
-        type: String
-    },
-    url: {
-        required: true,
-        type: String
-    }    
-})
-
 const playlist = new mongoose.Schema({
     name: {
         required: true,
@@ -22,7 +11,16 @@ const playlist = new mongoose.Schema({
         type: String
     },
     kids: [{ type: Schema.Types.ObjectId, ref: 'Kid' }],
-    videos: [video]
+    videos: [{
+        name: {
+            required: true,
+            type: String
+        },
+        url: {
+            required: true,
+            type: String
+        }    
+    }]
 })
 
 module.exports = mongoose.model('Playlist', playlist);

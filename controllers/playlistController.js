@@ -13,8 +13,8 @@ const playlistPost = async (req, res) => {
 
   playlist.name = req.body.name;
   playlist.user  = req.body.userId;
-  playlist.kids  = req.body.kids;
-  playlist.videos  = req.body.videos;
+  playlist.kids  = [];
+  playlist.videos  = [];
 
   if (playlist.name && playlist.user) {
     await playlist.save()
@@ -35,7 +35,7 @@ const playlistPost = async (req, res) => {
 
   } else {
     res.status(422);
-    console.log('error while saving the playlist')
+    console.log('error while saving the playlist', err)
     res.json({
       error: 'No valid data provided for playlist'
     });
@@ -43,6 +43,34 @@ const playlistPost = async (req, res) => {
 };
 
 const playlistPostVideo = async (req, res) => {
+
+  let videoName = req.body.name;
+  let videoUrl = req.body.url;
+
+  if (videoName && videoUrl) {
+    try {
+      const playlist = await Playlist.findById(req.params.id);
+
+      playlist.videos.push( {name: videoName, url: videoUrl} );
+    
+      await playlist.save();
+
+      res.status(201); // Created
+      res.header({
+        'location': `/tubekids/playlists/?id=${playlist._id}`
+      });
+
+      res.json(playlist);
+
+    } catch (err) {
+      res.status(422);
+      console.error(err);
+      res.json({
+        error: 'No valid data provided for playlist'
+      });
+    }
+  }
+  
 };
 
 
@@ -131,11 +159,38 @@ const playlistDelete = (req, res) => {
 
 };
 
+/**
+ * Deletes a video from playlist
+ *
+ * @param {*} req
+ * @param {*} res
+ */
+const playlistDeleteVideo =  async (req, res) => {
+  try {
+    const playlist = await Playlist.findById(req.params.id);
+
+    playlist.videos = playlist.videos.filter(function(video) {
+      return video._id != req.params.videoId;
+    });
+
+    await playlist.save();
+
+    res.status(200);
+    res.json(playlist);
+
+  } catch (err) {
+    res.status(422);
+    console.log('error while deleting the video', err);
+    res.json({error: 'There was an error deleting the video'});
+  }
+};
+
 module.exports = {
   playlistGet,
   playlistGetAll,
   playlistPost,
   playlistPostVideo,
   playlistPatch,
-  playlistDelete
+  playlistDelete,
+  playlistDeleteVideo
 }
