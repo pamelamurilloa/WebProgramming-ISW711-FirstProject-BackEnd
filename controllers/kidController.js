@@ -8,61 +8,57 @@ const Kid = require("../models/kidModel");
  * @param {*} res
  */
 
-const getUser = async (userId, res) => {
-    User.findById(userId)
-    .then( (data) => {
-      user = data;
-    })
+const getUser = async (userId) => {
+    let user = await User.findById(userId)
     .catch(err => {
-      res.status(404);
       console.log('error while trying to find the user', err)
-      res.json({ error: "User doesnt exist" })
     });
+
+    return user;
 }
 
 const kidPost = async (req, res) => {
-  let kid = new Kid();
+    let kid = new Kid();    
 
-  let userId = req.body.userId;
-  let user = getUser(userId);
+    let userId = req.body.userId;
+    let user = new User();
+    user = await getUser(userId);
 
-  kid.name = req.body.name;
-  kid.pin  = req.body.pin;
-  kid.avatar = req.body.avatar;
-  kid.age  = req.body.age;
+    console.log("User:" + user);
 
-  // Saves the kid with their parent
-  if (userId && kid.name && kid.pin && kid.avatar && kid.age) {
-    await kid.save()
-    .then( data => {
-        res.status(201); // Created
-        res.header({
-          'location': `/tubekids/kids/?id=${data.id}`
-        });
-        res.json(data);
+    kid.name = req.body.name;
+    kid.pin  = req.body.pin;
+    kid.avatar = req.body.avatar;
+    kid.age  = req.body.age;
+
+    // Saves the kid with their parent
+    if (user && kid.name && kid.pin && kid.avatar && kid.age) {
+        let newKid = await kid.save()
+        .catch(err => {
+            res.status(404);
+            console.log('error while saving the kid', err)
+            res.json({ error: "There was an error saving the kid" })
+            });
 
         // Add the kid's ID to the user's kids array
-        user.kids.push(data.id);
-    })
-    .catch(err => {
-        res.status(404);
-        console.log('error while saving the kid', err)
-        res.json({ error: "There was an error saving the kid" })
-      });
-  }
+        user.kids.push(newKid._id);
 
-  // Updated the user file with the new information
-  user.save(function (err) {
-    if (err) {
-      res.status(422);
-      console.log('error while updating the user', err)
-      res.json({
-        error: 'There was an error updating the user'
-      });
+        // Updated the user file with the new information
+        await user.save()
+        .then (data => {
+            res.status(200); // Saved
+            res.header({
+                'kidlocation': `/tubekids/kids/?id=${newKid.id}`,
+                'user_location': `/tubekids/users/?id=${data.id}`
+            });
+            res.json(data);
+        })
+        .catch (err => {
+            res.status(422);
+            console.log('error while saving the user', err);
+            res.json({error: 'There was an error saving the user'});
+        })
     }
-    res.status(200); // Saved
-    res.json(user);
-  });
 
 };
 
