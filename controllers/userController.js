@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const Kid = require("../models/kidModel");
+var moment = require('moment');
 /**
  * Creates a user
  *
@@ -11,16 +12,18 @@ const Kid = require("../models/kidModel");
 const userPost = async (req, res) => {
   let user = new User();
 
-  user.email = req.body.name;
+  user.email = req.body.email;
   user.password  = req.body.password;
   user.pin  = req.body.pin;
   user.name  = req.body.name;
   user.lastname  = req.body.lastname;
   user.country  = req.body.country;
-  user.birthdate  = req.body.birthdate;
+  user.birthdate  = moment(req.body.birthdate).format('YYYY-MM-DD');
   user.kids  = req.body.kids;
 
-  if (user.name && user.url) {
+  console.log(user.email + ", " + user.password + ", " +user.pin + ", " +user.name + ", " +user.lastname + ", " + user.country + ", " +user.birthdate + ", " + user.kids);
+
+  if (user.email && user.password && user.pin && user.name && user.lastname && user.birthdate && user.kids) {
     await user.save()
       .then(data => {
         res.status(201); // Created
@@ -40,9 +43,7 @@ const userPost = async (req, res) => {
   } else {
     res.status(422);
     console.log('error while saving the user')
-    res.json({
-      error: 'No valid data provided for user'
-    });
+    res.json({error: 'No valid data provided for user'});
   }
 };
 

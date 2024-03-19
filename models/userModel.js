@@ -23,7 +23,10 @@ const user = new mongoose.Schema({
         required: true,
         type: String
     },
-    country: String,
+    country: {
+        required: false,
+        type: String
+    },
     birthdate: {
         required: true,
         type: Date
