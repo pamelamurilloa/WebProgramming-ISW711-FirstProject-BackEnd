@@ -111,30 +111,30 @@ const playlistGetAll = (req, res) => {
  * @param {*} res
  */
 
-const playlistPatch = (req, res) => {
-  Playlist.findById(req.params.id, function (err, playlist) {
-    if (err) {
-      res.status(404);
-      console.log('error while trying to find the playlist', err)
-      res.json({ error: "Playlist doesnt exist" })
-    }
-    
+const playlistPatch = async (req, res) => {
 
+    let playlist = await playlist.findById(req.params.id)
+    .catch(err => {
+      res.status(404);
+      console.log('error while trying to find the user', err)
+      res.json({ error: "User doesnt exist" })
+    });
+    
     playlist.name = req.body.name ? req.body.name : playlist.name;
     playlist.url = req.body.url ? req.body.url : playlist.url;
+    playlist.kids = req.body.kids ? req.body.kids : playlist.kids;
+    playlist.videos = req.body.videos ? req.body.videos : playlist.videos;
 
-    playlist.save(function (err) {
-      if (err) {
-        res.status(422);
-        console.log('error while saving the playlist', err)
-        res.json({
-          error: 'There was an error saving the playlist'
-        });
-      }
+    playlist.save()
+    .then ( () => {
       res.status(200); // Saved
       res.json(playlist);
+    })
+    .catch (err => {
+      res.status(422);
+      console.log('error while saving the playlist', err);
+      res.json({error: 'There was an error saving the playlist'});
     });
-  });
 };
 
 
@@ -175,20 +175,16 @@ const playlistPatchVideo = async (req, res) => {
  * @param {*} req
  * @param {*} res
  */
-const playlistDelete = (req, res) => {
-
-  Playlist.findByIdAndDelete(req.params.id, function (err) {
-    if (err) {
-      res.status(422);
-      console.log('error while deleting the playlist', err)
-      res.json({
-        error: 'There was an error deleting the playlist'
-      });
-    }
+const playlistDelete = async (req, res) => {
+  try {
+    await Playlist.findByIdAndDelete(req.params.id);
     res.status(204); //No content
     res.json({});
-  });
-
+  }catch (err) {
+    res.status(422);
+    console.log('error while deleting the playlist', err)
+    res.json({ error: 'There was an error deleting the playlist'});
+  }
 };
 
 /**
