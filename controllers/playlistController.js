@@ -118,6 +118,7 @@ const playlistPatch = (req, res) => {
       console.log('error while trying to find the playlist', err)
       res.json({ error: "Playlist doesnt exist" })
     }
+    
 
     playlist.name = req.body.name ? req.body.name : playlist.name;
     playlist.url = req.body.url ? req.body.url : playlist.url;
@@ -136,6 +137,38 @@ const playlistPatch = (req, res) => {
   });
 };
 
+
+/**
+ * Updates a video in a playlist
+ *
+ * @param {*} req
+ * @param {*} res
+ */
+
+const playlistPatchVideo = async (req, res) => {
+  try {
+    const playlist = await Playlist.findById(req.params.id);
+
+    playlist.videos = playlist.videos.filter(function(video) {
+      if (video._id == req.params.videoId) {
+        video.name = req.body.name ? req.body.name : video.name;
+        video.url = req.body.url ? req.body.url : video.url;
+      }
+      return video;
+    });
+
+    await playlist.save();
+
+    res.status(200);
+    res.json(playlist);
+
+  } catch (err) {
+    res.status(422);
+    console.log('error while updating the video', err);
+    res.json({error: 'There was an error updating the video'});
+  }
+};
+
 /**
  * Deletes a playlist
  *
@@ -143,7 +176,6 @@ const playlistPatch = (req, res) => {
  * @param {*} res
  */
 const playlistDelete = (req, res) => {
-  // get playlist by id
 
   Playlist.findByIdAndDelete(req.params.id, function (err) {
     if (err) {
@@ -191,6 +223,7 @@ module.exports = {
   playlistPost,
   playlistPostVideo,
   playlistPatch,
+  playlistPatchVideo,
   playlistDelete,
   playlistDeleteVideo
 }
