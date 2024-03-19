@@ -21,8 +21,6 @@ const userPost = async (req, res) => {
   user.birthdate  = moment(req.body.birthdate).format('YYYY-MM-DD');
   user.kids  = req.body.kids;
 
-  console.log(user.email + ", " + user.password + ", " +user.pin + ", " +user.name + ", " +user.lastname + ", " + user.country + ", " +user.birthdate + ", " + user.kids);
-
   if (user.email && user.password && user.pin && user.name && user.lastname && user.birthdate && user.kids) {
     await user.save()
       .then(data => {
@@ -84,13 +82,18 @@ const userGetAll = (req, res) => {
  * @param {*} res
  */
 
-const userPatch = (req, res) => {
-  User.findById(req.params.id, function (err, user) {
-    if (err) {
+const userPatch = async (req, res) => {
+    let user = new User();
+    await User.findById(req.params.id)
+    .then( (data) => {
+      user = data;
+      console.log(user);
+    })
+    .catch(err => {
       res.status(404);
       console.log('error while trying to find the user', err)
       res.json({ error: "User doesnt exist" })
-    }
+    });
 
     user.email = req.body.email ? req.body.email : user.email;
     user.password = req.body.password ? req.body.password : user.password;
@@ -101,18 +104,16 @@ const userPatch = (req, res) => {
     user.birthdate = req.body.birthdate ? req.body.birthdate : user.birthdate;
     user.kids = req.body.kids ? req.body.kids : user.kids;
 
-    user.save(function (err) {
-      if (err) {
-        res.status(422);
-        console.log('error while saving the user', err)
-        res.json({
-          error: 'There was an error saving the user'
-        });
-      }
+    await user.save()
+    .then (data => {
       res.status(200); // Saved
-      res.json(user);
-    });
-  });
+      res.json(data);
+    })
+    .catch (err => {
+      res.status(422);
+      console.log('error while saving the user', err);
+      res.json({error: 'There was an error saving the user'});
+    })
 };
 
 /**
@@ -121,9 +122,9 @@ const userPatch = (req, res) => {
  * @param {*} req
  * @param {*} res
  */
- const userDelete = (req, res) => {
+ const userDelete = async (req, res) => {
   // get user by id
-    User.findById(req.params.id, function (err, user) {
+     await User.findById(req.params.id, function (err, user) {
       if (err) {
         res.status(404);
         console.log('error while queryting the user', err)
