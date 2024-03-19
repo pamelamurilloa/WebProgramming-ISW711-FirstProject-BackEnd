@@ -94,7 +94,7 @@ const playlistGet = (req, res) => {
 };
 
 const playlistGetAll = (req, res) => {
-  Playlist.find()
+  Playlist.find({ user: req.params.userId })
     .then( playlists => {
       res.json(playlists);
     })

@@ -13,7 +13,7 @@ const {
   } = require("../controllers/playlistController.js");
 
 router.get("/:id", playlistGet);
-router.get("/", playlistGetAll);
+router.get("/user/:userId", playlistGetAll);
 router.post("/", playlistPost); // Creates a playlist
 router.post("/:id", playlistPostVideo); // Creates a video in a playlist
 router.patch("/:id", playlistPatch);
