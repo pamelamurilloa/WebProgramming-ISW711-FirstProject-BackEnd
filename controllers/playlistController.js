@@ -1,68 +1,74 @@
-const Video = require("../models/videoModel");
+const Playlist = require("../models/playlistModel");
 
 /**
- * Creates a video
+ * Creates a playlist
  *
  * @param {*} req
  * @param {*} res
  */
 
 
-const videoPost = async (req, res) => {
-  let video = new Video();
+const playlistPost = async (req, res) => {
+  let playlist = new Playlist();
 
-  video.name = req.body.name;
-  video.url  = req.body.url;
+  playlist.name = req.body.name;
+  playlist.user  = req.body.userId;
+  playlist.kids  = req.body.kids;
+  playlist.videos  = req.body.videos;
 
-  if (video.name && video.url) {
-    await video.save()
+  if (playlist.name && playlist.user) {
+    await playlist.save()
       .then(data => {
         res.status(201); // Created
         res.header({
-          'location': `/tubekids/videos/?id=${data.id}`
+          'location': `/tubekids/playlists/?id=${data.id}`
         });
         res.json(data);
       })
       .catch( err => {
         res.status(422);
-        console.log('error while saving the video', err);
+        console.log('error while saving the playlist', err);
         res.json({
-          error: 'There was an error saving the video'
+          error: 'There was an error saving the playlist'
         });
       });
 
   } else {
     res.status(422);
-    console.log('error while saving the video')
+    console.log('error while saving the playlist')
     res.json({
-      error: 'No valid data provided for video'
+      error: 'No valid data provided for playlist'
     });
   }
 };
 
+const playlistPostVideo = async (req, res) => {
+};
+
+
 /**
- * Get all videos
+ * Get all playlists
  *
  * @param {*} req
  * @param {*} res
  */
 
-const videoGet = (req, res) => {
-    Video.findById(req.params.id)
-      .then( (video) => {
-        res.json(video);
+const playlistGet = (req, res) => {
+    Playlist.findById(req.params.id)
+      .then( (playlist) => {
+        res.json(playlist);
       })
       .catch(err => {
         res.status(404);
-        console.log('error while trying to find the video', err)
-        res.json({ error: "Video doesnt exist" })
+        console.log('error while trying to find the playlist', err)
+        res.json({ error: "Playlist doesnt exist" })
       });
 };
 
-const videoGetAll = (req, res) => {
-  Video.find()
-    .then( videos => {
-      res.json(videos);
+const playlistGetAll = (req, res) => {
+  Playlist.find()
+    .then( playlists => {
+      res.json(playlists);
     })
     .catch(err => {
       res.status(422);
@@ -71,52 +77,52 @@ const videoGetAll = (req, res) => {
 };
 
 /**
- * Updates a video
+ * Updates a playlist
  *
  * @param {*} req
  * @param {*} res
  */
 
-const videoPatch = (req, res) => {
-  Video.findById(req.params.id, function (err, video) {
+const playlistPatch = (req, res) => {
+  Playlist.findById(req.params.id, function (err, playlist) {
     if (err) {
       res.status(404);
-      console.log('error while trying to find the video', err)
-      res.json({ error: "Video doesnt exist" })
+      console.log('error while trying to find the playlist', err)
+      res.json({ error: "Playlist doesnt exist" })
     }
 
-    video.name = req.body.name ? req.body.name : video.name;
-    video.url = req.body.url ? req.body.url : video.url;
+    playlist.name = req.body.name ? req.body.name : playlist.name;
+    playlist.url = req.body.url ? req.body.url : playlist.url;
 
-    video.save(function (err) {
+    playlist.save(function (err) {
       if (err) {
         res.status(422);
-        console.log('error while saving the video', err)
+        console.log('error while saving the playlist', err)
         res.json({
-          error: 'There was an error saving the video'
+          error: 'There was an error saving the playlist'
         });
       }
       res.status(200); // Saved
-      res.json(video);
+      res.json(playlist);
     });
   });
 };
 
 /**
- * Deletes a video
+ * Deletes a playlist
  *
  * @param {*} req
  * @param {*} res
  */
-const videoDelete = (req, res) => {
-  // get video by id
+const playlistDelete = (req, res) => {
+  // get playlist by id
 
-  Video.findByIdAndDelete(req.params.id, function (err) {
+  Playlist.findByIdAndDelete(req.params.id, function (err) {
     if (err) {
       res.status(422);
-      console.log('error while deleting the video', err)
+      console.log('error while deleting the playlist', err)
       res.json({
-        error: 'There was an error deleting the video'
+        error: 'There was an error deleting the playlist'
       });
     }
     res.status(204); //No content
@@ -126,9 +132,10 @@ const videoDelete = (req, res) => {
 };
 
 module.exports = {
-  videoGet,
-  videoGetAll,
-  videoPost,
-  videoPatch,
-  videoDelete
+  playlistGet,
+  playlistGetAll,
+  playlistPost,
+  playlistPostVideo,
+  playlistPatch,
+  playlistDelete
 }
