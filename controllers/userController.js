@@ -18,6 +18,7 @@ const userPost = async (req, res) => {
   user.lastname  = req.body.lastname;
   user.country  = req.body.country;
   user.birthdate  = req.body.birthdate;
+  user.kids  = req.body.kids;
 
   if (user.name && user.url) {
     await user.save()
@@ -97,6 +98,7 @@ const userPatch = (req, res) => {
     user.lastname = req.body.lastname ? req.body.lastname : user.lastname;
     user.country = req.body.country ? req.body.country : user.country;
     user.birthdate = req.body.birthdate ? req.body.birthdate : user.birthdate;
+    user.kids = req.body.kids ? req.body.kids : user.kids;
 
     user.save(function (err) {
       if (err) {

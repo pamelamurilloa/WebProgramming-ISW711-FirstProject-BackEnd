@@ -108,27 +108,20 @@ const videoPatch = (req, res) => {
  * @param {*} req
  * @param {*} res
  */
- const videoDelete = (req, res) => {
+const videoDelete = (req, res) => {
   // get video by id
-    Video.findById(req.params.id, function (err, video) {
-      if (err) {
-        res.status(404);
-        console.log('error while queryting the video', err)
-        res.json({ error: "Video doesnt exist" })
-      }
 
-      video.deleteOne(function (err) {
-        if (err) {
-          res.status(422);
-          console.log('error while deleting the video', err)
-          res.json({
-            error: 'There was an error deleting the video'
-          });
-        }
-        res.status(204); //No content
-        res.json({});
+  Video.findByIdAndDelete(req.params.id, function (err) {
+    if (err) {
+      res.status(422);
+      console.log('error while deleting the video', err)
+      res.json({
+        error: 'There was an error deleting the video'
       });
-    });
+    }
+    res.status(204); //No content
+    res.json({});
+  });
 
 };
 
