@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const Kid = require('./kidModel');
 
 const user = new mongoose.Schema({
     email: {

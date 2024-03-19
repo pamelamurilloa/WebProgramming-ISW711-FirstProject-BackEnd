@@ -2,18 +2,18 @@ const express = require('express');
 const router = express.Router()
 
 const {
-    KidPatch,
-    KidPost,
-    KidGet,
-    KidGetAll,
-    KidDelete
+    kidPatch,
+    kidPost,
+    kidGet,
+    kidGetAll,
+    kidDelete
   } = require("../controllers/kidController.js");
 
-router.get("/:id", KidGet);
-router.get("/", KidGetAll);
-router.post("/", KidPost);
-router.patch("/:id", KidPatch);
-router.put("/:id", KidPatch);
-router.delete("/:id", KidDelete);
+router.get("/:id", kidGet);
+router.get("/", kidGetAll);
+router.post("/", kidPost);
+router.patch("/:id", kidPatch);
+router.put("/:id", kidPatch);
+router.delete("/:id", kidDelete);
 
 module.exports = router;
