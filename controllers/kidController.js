@@ -104,31 +104,31 @@ const kidGetAll = async (req, res) => {
  * @param {*} res
  */
 
-const kidPatch = (req, res) => {
-  Kid.findById(req.params.id, function (err, kid) {
-    if (err) {
-      res.status(404);
-      console.log('error while trying to find the kid', err)
-      res.json({ error: "Kid doesnt exist" })
-    }
+const kidPatch = async (req, res) => {
+    let kid = await Kid.findById(req.params.id)
+    .catch(err => {
+        res.status(422);
+        console.log('error while trying to find the kid', err)
+        res.json({ error: "Kid doesnt exist" })
+    });
+
+    console.log(kid);
 
     kid.name = req.body.name ? req.body.name : kid.name;
     kid.pin = req.body.pin ? req.body.pin : kid.pin;
     kid.avatar = req.body.avatar ? req.body.avatar : kid.avatar;
     kid.age = req.body.age ? req.body.age : kid.age;
 
-    kid.save(function (err) {
-      if (err) {
-        res.status(422);
+    kid.save()
+    .then ( () => {
+        res.status(200); // Saved
+        res.json(kid);
+    })
+    .catch(err => {
+        res.status(404);
         console.log('error while saving the kid', err)
-        res.json({
-          error: 'There was an error saving the kid'
-        });
-      }
-      res.status(200); // Saved
-      res.json(kid);
+        res.json({ error: "There was an error saving the kid" })
     });
-  });
 };
 
 /**
