@@ -46,7 +46,7 @@ const kidPost = async (req, res) => {
         .then (data => {
             res.status(200); // Saved
             res.header({
-                'kidlocation': `/tubekids/kids/?id=${newKid.id}`,
+                'kid_location': `/tubekids/kids/?id=${newKid.id}`,
                 'user_location': `/tubekids/users/?id=${data.id}`
             });
             res.json(data);
@@ -137,29 +137,30 @@ const kidPatch = async (req, res) => {
  * @param {*} req
  * @param {*} res
  */
- const kidDelete = (req, res) => {
-  // get kid by id
-  let userId = req.params.userId;
+ const kidDelete = async (req, res) => {
+    // get kid by id
+    let userId = req.body.userId;
 
-    Kid.findByIdAndDelete( req.params.id, function (err) {
-        if (err) {
-                res.status(422);
-                console.log('error while deleting the kid', err)
-                res.json({error: 'There was an error deleting the kid'});
-            }
-            res.status(204); //No content
-            res.json({});
+    await Kid.findByIdAndDelete( req.params.id)
+    .then ( () => {
+        console.log("Successfully deleted");
+    })
+    .catch (err => {
+        res.status(422);
+        console.log('error while deleting the kid', err)
+        res.json({error: 'There was an error deleting the kid'});
     });
       
-    User.findByIdAndUpdate(userId, { $pull: { kids: req.params.id } }, function (err) {
-        if (err) {
-          res.status(422);
+    console.log();
+    await User.findByIdAndUpdate(userId, { $pull: { kids: { $in: [req.params.id] } } })
+    .then ( () => {
+        res.status(200); // Saved
+        res.json({});
+    }).catch (err => {
+        res.status(422);
           console.log('Error while removing the kid from the parent', err);
           return res.json({error: 'There was an error removing the kid from the parent'});
-        }
-        res.status(204); // No content
-        res.json({});
-      });
+    });
 };
 
 module.exports = {
