@@ -8,7 +8,6 @@ var moment = require('moment');
  * @param {*} res
  */
 
-
 const userPost = async (req, res) => {
   let user = new User();
 
@@ -87,7 +86,6 @@ const userPatch = async (req, res) => {
     await User.findById(req.params.id)
     .then( (data) => {
       user = data;
-      console.log(user);
     })
     .catch(err => {
       res.status(404);
@@ -123,39 +121,42 @@ const userPatch = async (req, res) => {
  * @param {*} res
  */
  const userDelete = async (req, res) => {
-  // get user by id
-     await User.findById(req.params.id, function (err, user) {
-      if (err) {
-        res.status(404);
-        console.log('error while queryting the user', err)
-        res.json({ error: "User doesnt exist" })
-      }
-      
-      Kid.deleteMany( {_id: { $in: user.kids } }, function (err) {
-        if (err) {
-          res.status(422);
-          console.log('error while deleting the kids', err)
-          res.json({
-            error: 'There was an error deleting the kids'
-          });
-        }
-        res.status(204); //No content
-        res.json({});
-      });
-
-      user.deleteOne(function (err) {
-        if (err) {
-          res.status(422);
-          console.log('error while deleting the user', err)
-          res.json({
-            error: 'There was an error deleting the user'
-          });
-        }
-        res.status(204); //No content
-        res.json({});
-      });
-      
+    // get user by id
+    let user = new User();
+    await User.findById(req.params.id)
+    .then( (data) => {
+      user = data;
+    })
+    .catch(err => {
+      res.status(404);
+      console.log('error while trying to find the user', err)
+      res.json({ error: "User doesnt exist" })
     });
+
+    try {
+        await Kid.deleteMany( {_id: { $in: user.kids } } )
+        .catch (err => {
+          res.status(422);
+          console.log('error while deleting the user', err);
+          res.json({error: 'There was an error deleting the user'});
+        })
+      
+        await user.deleteOne(req.body.id)
+        .then ( () => {
+            res.status(204); //No content
+            res.json('User deleted succesfully');
+          }
+        )
+        .catch (err => {
+          res.status(422);
+          console.log('error while saving the user', err);
+          res.json({error: 'There was an error saving the user'});
+        })
+    }
+    catch (err) {
+      console.log('error while deleting the user', err);
+      res.json({error: 'User doesnt exist'});
+    }
 };
 
 module.exports = {
