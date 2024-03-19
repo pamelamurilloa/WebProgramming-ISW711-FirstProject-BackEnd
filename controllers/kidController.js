@@ -24,8 +24,6 @@ const kidPost = async (req, res) => {
     let user = new User();
     user = await getUser(userId);
 
-    console.log("User:" + user);
-
     kid.name = req.body.name;
     kid.pin  = req.body.pin;
     kid.avatar = req.body.avatar;
@@ -70,7 +68,6 @@ const kidPost = async (req, res) => {
  */
 
 const kidGet = (req, res) => {
-
     Kid.findById(req.params.id)
       .then( (kid) => {
         res.json(kid);
@@ -82,12 +79,14 @@ const kidGet = (req, res) => {
       });
 };
 
-const kidGetAll = (req, res) => {
+const kidGetAll = async (req, res) => {
   
   let userId = req.body.userId;
-  let user = getUser(userId);
+  let user = await getUser(userId);
 
-    Kid.find({ _id: { $in: user.kids } })
+  console.log(user);
+
+    await Kid.find({ _id: { $in: user.kids } })
     .then(kids => {
       res.json(kids);
     })
