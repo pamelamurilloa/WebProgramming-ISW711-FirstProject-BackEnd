@@ -121,8 +121,6 @@ const kidPatch = async (req, res) => {
         res.json({ error: "Kid doesnt exist" })
     });
 
-    console.log(kid);
-
     kid.name = req.body.name ? req.body.name : kid.name;
     kid.pin = req.body.pin ? req.body.pin : kid.pin;
     kid.avatar = req.body.avatar ? req.body.avatar : kid.avatar;
