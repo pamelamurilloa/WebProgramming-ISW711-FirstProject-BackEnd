@@ -43,7 +43,7 @@ const playlistPost = async (req, res) => {
 };
 
 const playlistPostVideo = async (req, res) => {
-
+  console.log(req.params, req.body)
   let videoName = req.body.name;
   let videoUrl = req.body.url;
 
