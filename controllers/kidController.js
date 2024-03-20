@@ -98,6 +98,7 @@ const kidGetAll = async (req, res) => {
             }
         }
 
+        res.status(200);
         res.json(kids);
     } catch (err) {
         res.status(404);
@@ -106,8 +107,20 @@ const kidGetAll = async (req, res) => {
       };
 };
 
-const kidCompare = () => {
-    
+const kidCompare = (req, res) => {
+    const childId = req.params.id;
+    const pin = req.params.pin;
+  
+    Kid.findOne({ _id: childId, pin: pin })
+    .then( (kid) => {
+      res.status(200);
+      res.json(kid);
+    })
+    .catch(err => {
+      res.status(404);
+      console.log('error while trying to find the kid', err)
+      res.json({ error: "Kid doesnt exist" })
+    });
 }
 
 /**
