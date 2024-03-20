@@ -106,6 +106,10 @@ const kidGetAll = async (req, res) => {
       };
 };
 
+const kidCompare = () => {
+    
+}
+
 /**
  * Updates a kid
  *
@@ -173,6 +177,7 @@ const kidPatch = async (req, res) => {
 module.exports = {
   kidGet,
   kidGetAll,
+  kidCompare,
   kidPost,
   kidPatch,
   kidDelete

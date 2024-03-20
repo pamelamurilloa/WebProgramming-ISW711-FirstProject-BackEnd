@@ -5,11 +5,13 @@ const {
     kidPatch,
     kidPost,
     kidGet,
+    kidCompare,
     kidGetAll,
     kidDelete
   } = require("../controllers/kidController.js");
 
 router.get("/:id", kidGet);
+router.get("/:id/:pin", kidCompare);
 router.get("/user/:userId", kidGetAll);
 router.post("/", kidPost);
 router.patch("/:id", kidPatch);

@@ -5,11 +5,13 @@ const {
     userPatch,
     userPost,
     userGet,
+    userCompare,
     userGetAll,
     userDelete
   } = require("../controllers/userController.js");
 
 router.get("/:id", userGet);
+router.get("/:email/:password", userCompare);
 router.get("/", userGetAll);
 router.post("/", userPost);
 router.patch("/:id", userPatch);

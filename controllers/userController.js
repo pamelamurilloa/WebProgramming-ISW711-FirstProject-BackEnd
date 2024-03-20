@@ -18,7 +18,7 @@ const userPost = async (req, res) => {
   user.lastname  = req.body.lastname;
   user.country  = req.body.country;
   user.birthdate  = moment(req.body.birthdate).format('YYYY-MM-DD');
-  user.kids  = req.body.kids;
+  user.kids = [];
 
   if (user.email && user.password && user.pin && user.name && user.lastname && user.birthdate && user.kids) {
     await user.save()
@@ -73,6 +73,29 @@ const userGetAll = (req, res) => {
       res.json({ "error": err });
     });
 };
+
+/**
+ * Compares passwords
+ *
+ * @param {*} req
+ * @param {*} res
+ */
+const userCompare = (req, res) => {
+  const email = req.params.email;
+  const password = req.params.password;
+
+  User.findOne({ email: email, password: password })
+  .then( (user) => {
+    res.status(200);
+    res.json(user);
+  })
+  .catch(err => {
+    res.status(404);
+    console.log('error while trying to find the user', err)
+    res.json({ error: "User doesnt exist" })
+  });
+
+}
 
 /**
  * Updates a user
@@ -162,6 +185,7 @@ const userPatch = async (req, res) => {
 module.exports = {
   userGet,
   userGetAll,
+  userCompare,
   userPost,
   userPatch,
   userDelete
