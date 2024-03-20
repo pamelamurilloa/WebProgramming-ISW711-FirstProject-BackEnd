@@ -75,29 +75,6 @@ const userGetAll = (req, res) => {
 };
 
 /**
- * Compares passwords
- *
- * @param {*} req
- * @param {*} res
- */
-const userCompare = (req, res) => {
-  const email = req.params.email;
-  const password = req.params.password;
-
-  User.findOne({ email: email, password: password })
-  .then( (user) => {
-    res.status(200);
-    res.json(user);
-  })
-  .catch(err => {
-    res.status(404);
-    console.log('error while trying to find the user', err)
-    res.json({ error: "User doesnt exist" })
-  });
-
-}
-
-/**
  * Updates a user
  *
  * @param {*} req
@@ -185,7 +162,6 @@ const userPatch = async (req, res) => {
 module.exports = {
   userGet,
   userGetAll,
-  userCompare,
   userPost,
   userPatch,
   userDelete

@@ -31,7 +31,7 @@ const user = new mongoose.Schema({
         required: true,
         type: Date
     },
-    kids: [{ type: Schema.Types.ObjectId, ref: 'Kid' }]
+    kids: [{ type: Schema.Types.ObjectId, ref: 'Kid' }],
 })
 
 module.exports = mongoose.model('User', user);
