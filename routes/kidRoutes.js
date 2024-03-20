@@ -10,7 +10,7 @@ const {
   } = require("../controllers/kidController.js");
 
 router.get("/:id", kidGet);
-router.get("/", kidGetAll);
+router.get("/user/:userId", kidGetAll);
 router.post("/", kidPost);
 router.patch("/:id", kidPatch);
 router.put("/:id", kidPatch);

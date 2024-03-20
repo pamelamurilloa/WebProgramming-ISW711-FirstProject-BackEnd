@@ -81,20 +81,26 @@ const kidGet = (req, res) => {
 
 const kidGetAll = async (req, res) => {
   
-  let userId = req.body.userId;
-  let user = await getUser(userId);
+    try {
+        let userId = req.params.userId;
+        let user = await User.findById(userId);
 
-  console.log(user);
+        let kids = [];
 
-    await Kid.find({ _id: { $in: user.kids } })
-    .then(kids => {
-      res.json(kids);
-    })
-    .catch(err => {
-        res.status(422);
+        for (const kidId of user.kids) {
+            const kid = await Kid.findById(kidId.toString());
+            console.log(kidId.toString());
+            if (kid) {
+                kids.push(kid);
+            }
+        }
+
+        res.json(kids);
+    } catch (err) {
+        res.status(404);
         console.log('error while trying to find the kid', err)
         res.json({ error: "Kid doesnt exist" })
-    });
+      };
 };
 
 /**
