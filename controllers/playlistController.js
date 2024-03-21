@@ -26,6 +26,7 @@ const playlistPost = async (req, res) => {
         res.json(data);
       })
       .catch( err => {
+        console.error(err);
         res.status(422);
         console.log('error while saving the playlist', err);
         res.json({
@@ -35,7 +36,7 @@ const playlistPost = async (req, res) => {
 
   } else {
     res.status(422);
-    console.log('error while saving the playlist', err)
+    console.log('error while saving the playlist')
     res.json({
       error: 'No valid data provided for playlist'
     });
